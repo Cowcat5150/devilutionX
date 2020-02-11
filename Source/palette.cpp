@@ -6,7 +6,6 @@ DEVILUTION_BEGIN_NAMESPACE
 SDL_Color logical_palette[256];
 SDL_Color system_palette[256];
 SDL_Color orig_palette[256];
-int gdwPalEntries;
 
 /* data */
 
@@ -14,20 +13,9 @@ int gamma_correction = 100;
 BOOL color_cycling_enabled = TRUE;
 BOOLEAN sgbFadedIn = TRUE;
 
-static void palette_update()
+void palette_update()
 {
-	int nentries;
-	int max_entries;
-
-	if (1) {
-		nentries = 0;
-		max_entries = 256;
-		if (!fullscreen) {
-			nentries = gdwPalEntries;
-			max_entries = 2 * (128 - gdwPalEntries);
-		}
-		SDrawUpdatePalette(nentries, max_entries, &system_palette[nentries], 0);
-	}
+	SDrawUpdatePalette(0, 256, system_palette, 0);
 }
 
 void ApplyGamma(SDL_Color *dst, const SDL_Color *src, int n)
@@ -163,23 +151,6 @@ void SetFadeLevel(DWORD fadeval)
 		system_palette[i].b = (fadeval * logical_palette[i].b) >> 8;
 	}
 	palette_update();
-
-	// Workaround for flickering mouse in caves https://github.com/diasurgical/devilutionX/issues/7
-	SDL_Rect SrcRect = {
-		SCREEN_X,
-		SCREEN_Y,
-		SCREEN_WIDTH,
-		SCREEN_HEIGHT,
-	};
-	SDL_Rect DstRect = {
-		0,
-		0,
-		SCREEN_WIDTH,
-		SCREEN_HEIGHT,
-	};
-
-	BltFast(&SrcRect, &DstRect);
-	RenderPresent();
 }
 
 void BlackPalette()
@@ -195,6 +166,9 @@ void PaletteFadeIn(int fr)
 	DWORD tc = SDL_GetTicks();
 	for (i = 0; i < 256; i = (SDL_GetTicks() - tc) / 2.083) { // 32 frames @ 60hz
 		SetFadeLevel(i);
+		SDL_Rect SrcRect = { SCREEN_X, SCREEN_Y, SCREEN_WIDTH, SCREEN_HEIGHT };
+		BltFast(&SrcRect, NULL);
+		RenderPresent();
 	}
 	SetFadeLevel(256);
 	memcpy(logical_palette, orig_palette, sizeof(orig_palette));
@@ -209,6 +183,9 @@ void PaletteFadeOut(int fr)
 		DWORD tc = SDL_GetTicks();
 		for (i = 256; i > 0; i = 256 - (SDL_GetTicks() - tc) / 2.083) { // 32 frames @ 60hz
 			SetFadeLevel(i);
+			SDL_Rect SrcRect = { SCREEN_X, SCREEN_Y, SCREEN_WIDTH, SCREEN_HEIGHT };
+			BltFast(&SrcRect, NULL);
+			RenderPresent();
 		}
 		SetFadeLevel(0);
 		sgbFadedIn = FALSE;

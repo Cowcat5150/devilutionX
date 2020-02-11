@@ -18,6 +18,7 @@ option(BINARY_RELEASE "Enable options for binary release" OFF)
 option(NIGHTLY_BUILD "Enable options for nightly build" OFF)
 option(USE_SDL1 "Use SDL1.2 instead of SDL2" OFF)
 option(NONET "Disable network" OFF)
+option(RUN_TESTS "Build and run tests" OFF)
 
 if(BINARY_RELEASE)
   set(CMAKE_BUILD_TYPE "Release")
@@ -104,6 +105,11 @@ endif()
 
 if(HAIKU)
   set(ASAN OFF)
+  set(UBSAN OFF)
+endif()
+
+if(AMIGA)
+  include(amiga_defs)
 endif()
 
 if(AMIGA)
@@ -264,7 +270,7 @@ set(devilutionx_SRCS
   SourceX/controls/touch.cpp
   SourceX/display.cpp
   SourceX/miniwin/misc_msg.cpp
-  SourceX/miniwin/thread.cpp
+  SourceX/thread.cpp
   SourceX/sound.cpp
   SourceX/soundsample.cpp
   SourceX/storm/storm.cpp
@@ -319,7 +325,34 @@ if(SWITCH)
   set(BIN_TARGET devilutionx.elf)
 endif()
 
+if(RUN_TESTS)
+  list(APPEND devilutionx_SRCS
+    SourceT/appfat_test.cpp
+    SourceT/automap_test.cpp
+    SourceT/control_test.cpp
+    SourceT/cursor_test.cpp
+    SourceT/codec_test.cpp
+    SourceT/dead_test.cpp
+    SourceT/diablo_test.cpp
+    SourceT/doom_test.cpp
+    SourceT/drlg_l1_test.cpp
+    SourceT/drlg_l2_test.cpp
+    SourceT/drlg_l3_test.cpp
+    SourceT/drlg_l4_test.cpp
+    SourceT/effects_test.cpp)
+endif()
+
 add_executable(${BIN_TARGET} WIN32 MACOSX_BUNDLE ${devilutionx_SRCS})
+
+if(RUN_TESTS)
+  include(CTest)
+  include(GoogleTest)
+  find_package(GTest REQUIRED)
+  include_directories(${GTEST_INCLUDE_DIRS})
+  add_definitions(-fprofile-arcs -ftest-coverage -DRUN_TESTS)
+  target_link_libraries(${BIN_TARGET} PRIVATE -fprofile-arcs ${GTEST_LIBRARIES})
+  gtest_add_tests(${BIN_TARGET} "" AUTO)
+endif()
 
 configure_file(SourceS/config.h.in config.h @ONLY)
 target_include_directories(devilution PUBLIC Source SourceS ${CMAKE_CURRENT_BINARY_DIR})
@@ -353,7 +386,6 @@ foreach(
   def_name
   SPAWN
   NONET
-  RETROFW
   PREFILL_PLAYER_NAME
 )
 if(${def_name})
@@ -367,6 +399,7 @@ foreach(
   TTF_FONT_PATH
   SDL1_VIDEO_MODE_WIDTH
   SDL1_VIDEO_MODE_HEIGHT
+  TTF_FONT_PATH
   SDL1_VIDEO_MODE_BPP
   SDL1_VIDEO_MODE_FLAGS
   HAS_KBCTRL
@@ -460,7 +493,7 @@ foreach(target devilution ${BIN_TARGET})
   target_compile_definitions(${target} PRIVATE ${def_list})
 endforeach(target)
 
-if(DIST AND CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+if(DIST AND CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND NOT HAIKU)
   target_link_libraries(${BIN_TARGET} PUBLIC -static-libgcc -static-libstdc++)
 endif()
 
