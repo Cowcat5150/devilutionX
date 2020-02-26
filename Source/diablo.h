@@ -89,6 +89,11 @@
 //}
 //#endif
 
+#if defined(__MORPHOS__)
+#define atexit
+extern void atexit_fix();
+#endif
+
 extern HWND ghMainWnd;
 extern int glMid1Seed[NUMLEVELS];
 extern int glMid2Seed[NUMLEVELS];

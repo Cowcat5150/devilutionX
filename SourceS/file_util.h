@@ -14,6 +14,10 @@
 #include <cstdio>
 #endif
 
+#if defined(WARPUP)
+extern "C" int truncate(const char *path, off_t length);
+#endif
+
 namespace dvl {
 
 inline bool FileExists(const char *path)

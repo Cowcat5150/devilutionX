@@ -18,6 +18,10 @@
 #define LEAVE_ENDING 0x40000004
 #define LEAVE_DROP 0x40000006
 
+#if defined(__MORPHOS__)
+#undef send
+#endif
+
 namespace dvl {
 namespace net {
 

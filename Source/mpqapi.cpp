@@ -15,6 +15,7 @@ _BLOCKENTRY *sgpBlockTbl;
 
 //note: 32872 = 32768 + 104 (sizeof(_FILEHEADER))
 
+
 /* data */
 
 #define RETURN_IF_FAIL(obj, op, ...)                                                                        \
@@ -36,6 +37,23 @@ namespace {
 static std::fstream *archive = nullptr;
 
 } // namespace
+
+
+#if defined(__MORPHOS__) || defined(WARPUP)
+
+#define AMIGA_SEEKP_FIX 1
+bool newstream = false;
+
+void fixseekp(int offset)
+{	
+	//SDL_Log("fixseek - offset %d", offset);
+	char buffer[offset];
+	archive->write(buffer, offset);
+
+	return;
+}
+
+#endif
 
 void mpqapi_remove_hash_entry(const char *pszName)
 {
@@ -214,6 +232,14 @@ BOOL mpqapi_write_file_contents(const char *pszName, const BYTE *pbData, DWORD d
 	pBlk->offset = mpqapi_find_free_block(dwLen + nNumberOfBytesToWrite, &pBlk->sizealloc);
 	pBlk->sizefile = dwLen;
 	pBlk->flags = 0x80000100;
+	
+	#if AMIGA_SEEKP_FIX
+	
+	if(newstream)
+		fixseekp(pBlk->offset);
+	
+	#endif
+	
 	RETURN_IF_FAIL(archive, seekp, pBlk->offset);
 	j = 0;
 	const auto start_pos = archive->tellp();
@@ -336,6 +362,10 @@ BOOL OpenMPQ(const char *pszArchive, DWORD dwChar)
 		archive = new std::fstream(pszArchive, std::ios::in | std::ios::out | std::ios::binary);
 	} else {
 		archive = new std::fstream(pszArchive, std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
+		
+		#if AMIGA_SEEKP_FIX
+		newstream = true;
+		#endif
 	}
 	if (archive->fail()) {
 		SDL_Log("Failed to OpenMPQ at %s", pszArchive);
@@ -505,6 +535,16 @@ BOOL mpqapi_write_hash_table()
 
 BOOL mpqapi_can_seek()
 {
+	#if AMIGA_SEEKP_FIX
+	
+	if(newstream)
+	{
+		fixseekp(sgdwMpqOffset);
+		newstream = false;
+	}
+	
+	#endif
+	
 	RETURN_IF_FAIL(archive, seekp, sgdwMpqOffset);
 	return TRUE;
 }

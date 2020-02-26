@@ -1,4 +1,8 @@
-cmake_minimum_required(VERSION 3.10) # CMP0083 NEW
+if(NOT WARPOS AND NOT MORPHOS)
+  cmake_minimum_required(VERSION 3.10) # CMP0083 NEW
+else()
+  cmake_minimum_required(VERSION 3.8)
+endif()
 
 include(CMake/out_of_tree.cmake)
 
@@ -325,6 +329,11 @@ if(SWITCH)
   set(BIN_TARGET devilutionx.elf)
 endif()
 
+if(WARPOS)
+  list(APPEND devilutionx_SRCS
+    SourceX/platform/warpos/warpos_extra.c)
+endif()
+
 if(RUN_TESTS)
   list(APPEND devilutionx_SRCS
     SourceT/appfat_test.cpp
@@ -353,6 +362,7 @@ if(RUN_TESTS)
   target_link_libraries(${BIN_TARGET} PRIVATE -fprofile-arcs ${GTEST_LIBRARIES})
   gtest_add_tests(${BIN_TARGET} "" AUTO)
 endif()
+
 
 configure_file(SourceS/config.h.in config.h @ONLY)
 target_include_directories(devilution PUBLIC Source SourceS ${CMAKE_CURRENT_BINARY_DIR})
@@ -494,7 +504,11 @@ foreach(target devilution ${BIN_TARGET})
 endforeach(target)
 
 if(DIST AND CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND NOT HAIKU)
-  target_link_libraries(${BIN_TARGET} PUBLIC -static-libgcc -static-libstdc++)
+  if(WARPOS)
+    target_link_libraries(${BIN_TARGET} PUBLIC -woslibs -lpthreads)
+  else()
+    target_link_libraries(${BIN_TARGET} PUBLIC -static-libgcc -static-libstdc++)
+  endif()
 endif()
 
 if(WIN32)

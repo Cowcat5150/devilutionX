@@ -328,8 +328,14 @@ void UiHandleEvents(SDL_Event *event)
 	}
 
 	if (event->type == SDL_QUIT)
+	{
+		#if defined(__MORPHOS__)
+		atexit_fix();
+		#endif
+		
 		exit(0);
-
+	}
+	
 #ifndef USE_SDL1
 	if (event->type == SDL_JOYDEVICEADDED || event->type == SDL_JOYDEVICEREMOVED) {
 		InitController();

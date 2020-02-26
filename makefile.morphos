@@ -1,0 +1,515 @@
+B = buildmos
+BPK = $(B)/PKWare.dir
+BR = $(B)/Radon.dir
+BS = $(B)/smacker.dir
+BST = $(B)/StormLib.dir
+BD = $(B)/devilution.dir
+BDX = $(B)/devilutionX.dir
+
+CXX = g++
+CC = gcc
+
+AR = /gg/bin/ar
+RANLIB = /gg/bin/ranlib
+
+PATH_SOURCE = /Work/Git/new/devilutionX-master
+
+CXX_FLAGS = -O3 -ffast-math -noixemul -fexceptions -Wno-builtin-macro-redefined -fpermissive -std=c++11
+CXX_DEFINES = -DNDEBUG -D_POSIX_C_SOURCE=200809L
+CXX_INCLUDES =
+
+CXX_FLAGS_DEVILUTION = -O3 -ffast-math -noixemul -Igg:usr/local/include/SDL -fexceptions -fpermissive -Wno-builtin-macro-redefined -w -fsigned-char -std=c++11
+CXX_DEFINES_DEVILUTION = -DDEVILUTION_ENGINE -DNONET -DSDL1_VIDEO_MODE_BPP=8 -DTTF_FONT_PATH=\"LiberationSerif-Bold.ttf\" -DNDEBUG -DUSE_SDL1 -D_POSIX_C_SOURCE=200809L
+CXX_INCLUDES_DEVILUTION = -I$(PATH_SOURCE)/Source -I$(PATH_SOURCE)/SourceS -I$(PATH_SOURCE)/$(B)
+
+CXX_FLAGS_DEVILUTIONX = -O3 -ffast-math -noixemul -Igg:usr/local/include/SDL -Wno-builtin-macro-redefined -Wall -Wextra -Wno-write-strings -Wno-unused-parameter -Wno-missing-field-initializers -Wno-format-security -fsigned-char -std=c++11
+CXX_DEFINES_DEVILUTIONX = -DASIO_STANDALONE -DNONET -DSDL1_VIDEO_MODE_BPP=8 -DTTF_FONT_PATH=\"LiberationSerif-Bold.ttf\" -DNDEBUG -DUSE_SDL1 -D_POSIX_C_SOURCE=200809L
+CXX_INCLUDES_DEVILUTIONX = -I$(PATH_SOURCE)/SourceX -I$(PATH_SOURCE)/3rdParty/asio/include -I$(PATH_SOURCE)/3rdParty/Radon/Radon/include -I$(PATH_SOURCE)/3rdParty/libsmacker -I$(PATH_SOURCE)/Source -I$(PATH_SOURCE)/SourceS -I$(PATH_SOURCE)/$(B)
+
+C_FLAGS =  -O3 -ffast-math -noixemul -fexceptions -Wno-builtin-macro-redefined 
+C_DEFINES = -DNDEBUG -D_POSIX_C_SOURCE=200809L
+C_INCLUDES =
+
+DO_CC = $(CC) $(C_FLAGS) $(C_DEFINES) $(C_INCLUDES) -o $@ -c $<
+DO_CXX = $(CXX) $(CXX_FLAGS) $(CXX_DEFINES) $(CXX_INCLUDES) -o $@ -c $<
+DO_CXX_DEVILUTION = $(CXX) $(CXX_FLAGS_DEVILUTION) $(CXX_DEFINES_DEVILUTION) $(CXX_INCLUDES_DEVILUTION) -o $@ -c $<
+DO_CXX_DEVILUTIONX = $(CXX) $(CXX_FLAGS_DEVILUTIONX) $(CXX_DEFINES_DEVILUTIONX) $(CXX_INCLUDES_DEVILUTIONX) -o $@ -c $<
+
+OBJSMACKER = \
+$(BS)/smk_bitstream.o \
+$(BS)/smk_hufftree.o \
+$(BS)/smacker.o \
+
+OBJRADON = \
+$(BR)/File.o \
+$(BR)/Key.o \
+$(BR)/Named.o \
+$(BR)/Section.o \
+
+OBJPKWARE = \
+$(BPK)/explode.o \
+$(BPK)/implode.o \
+
+OBJSTORM = \
+$(BST)/FileStream.o \
+$(BST)/SBaseCommon.o \
+$(BST)/SBaseFileTable.o \
+$(BST)/SBaseSubTypes.o \
+$(BST)/SCompression.o \
+$(BST)/SFileExtractFile.o \
+$(BST)/SFileFindFile.o \
+$(BST)/SFileGetFileInfo.o \
+$(BST)/SFileOpenArchive.o \
+$(BST)/SFileOpenFileEx.o \
+$(BST)/SFileReadFile.o \
+
+OBJDEVILUTION = \
+$(BD)/appfat.o \
+$(BD)/automat.o \
+$(BD)/capture.o \
+$(BD)/codec.o \
+$(BD)/control.o \
+$(BD)/cursor.o \
+$(BD)/dead.o \
+$(BD)/debug.o \
+$(BD)/diablo.o \
+$(BD)/doom.o \
+$(BD)/drlg_l1.o \
+$(BD)/drlg_l2.o \
+$(BD)/drlg_l3.o \
+$(BD)/drlg_l4.o \
+$(BD)/dthread.o \
+$(BD)/effects.o \
+$(BD)/encrypt.o \
+$(BD)/engine.o \
+$(BD)/error.o \
+$(BD)/gamemenu.o \
+$(BD)/gendung.o \
+$(BD)/gmenu.o \
+$(BD)/help.o \
+$(BD)/init.o \
+$(BD)/interfac.o \
+$(BD)/inv.o \
+$(BD)/itemdat.o \
+$(BD)/items.o \
+$(BD)/lighting.o \
+$(BD)/loadsave.o \
+$(BD)/mainmenu.o \
+$(BD)/minitext.o \
+$(BD)/misdat.o \
+$(BD)/missiles.o \
+$(BD)/monstdat.o \
+$(BD)/monster.o \
+$(BD)/movie.o \
+$(BD)/mpqapi.o \
+$(BD)/msg.o \
+$(BD)/multi.o \
+$(BD)/nthread.o \
+$(BD)/objdat.o \
+$(BD)/objects.o \
+$(BD)/pack.o \
+$(BD)/palette.o \
+$(BD)/path.o \
+$(BD)/pfile.o \
+$(BD)/player.o \
+$(BD)/plrmsg.o \
+$(BD)/portal.o \
+$(BD)/spelldat.o \
+$(BD)/quests.o \
+$(BD)/render.o \
+$(BD)/restrict.o \
+$(BD)/scrollrt.o \
+$(BD)/setmaps.o \
+$(BD)/sha.o \
+$(BD)/spells.o \
+$(BD)/stores.o \
+$(BD)/sync.o \
+$(BD)/textdat.o \
+$(BD)/themes.o \
+$(BD)/tmsg.o \
+$(BD)/town.o \
+$(BD)/towners.o \
+$(BD)/track.o \
+$(BD)/trigs.o \
+$(BD)/wave.o \
+
+OBJDEVILUTIONX = \
+$(BDX)/dx.o \
+$(BDX)/game_controller.o \
+$(BDX)/joystick.o \
+$(BDX)/kbcontroller.o \
+$(BDX)/controller.o \
+$(BDX)/controller_motion.o \
+$(BDX)/game_controls.o \
+$(BDX)/menu_controls.o \
+$(BDX)/modifier_hints.o \
+$(BDX)/plrctrls.o \
+$(BDX)/touch.o \
+$(BDX)/display.o \
+$(BDX)/misc_msg.o \
+$(BDX)/thread.o \
+$(BDX)/sound.o \
+$(BDX)/soundsample.o \
+$(BDX)/storm.o \
+$(BDX)/storm_net.o \
+$(BDX)/storm_dx.o \
+$(BDX)/abstract_net.o \
+$(BDX)/loopback.o \
+$(BDX)/packet.o \
+$(BDX)/base.o \
+$(BDX)/frame_queue.o \
+$(BDX)/cdwrap.o \
+$(BDX)/art_draw.o \
+$(BDX)/errorart.o \
+$(BDX)/art.o \
+$(BDX)/button.o \
+$(BDX)/credits.o \
+$(BDX)/credits_lines.o \
+$(BDX)/diabloui.o \
+$(BDX)/dialogs.o \
+$(BDX)/fonts.o \
+$(BDX)/mainmenu.o \
+$(BDX)/progress.o \
+$(BDX)/scrollbar.o \
+$(BDX)/selconn.o \
+$(BDX)/selgame.o \
+$(BDX)/selhero.o \
+$(BDX)/selyesno.o \
+$(BDX)/selok.o \
+$(BDX)/text_draw.o \
+$(BDX)/text.o \
+$(BDX)/title.o \
+$(BDX)/ttf_render_wrapped.o \
+$(BDX)/main.o \
+$(BDX)/morphos_fix.o \
+
+
+SMACKER = $(B)/libsmacker.a
+RADON = $(B)/libradon.a
+PKWARE = $(B)/libPKWare.a
+STORMLIB = $(B)/libStormLib.a
+DEVILUTION = $(B)/libdevilution.a
+DEVILUTIONX = $(B)/devilutionx-mos
+
+#rm -f $(B)/devilutionx-mos
+#-rm -f devilutionx-mos
+
+#LIBS = $(DEVILUTION) $(PKWARE) $(STORMLIB) $(SMACKER) $(RADON) -lSDL_mixer -lSDL_ttf -lSDL -static-libgcc -static-libstdc++ -woslibs -lpthreads
+LIBS = $(DEVILUTION) $(PKWARE) $(STORMLIB) $(SMACKER) $(RADON) -Lgg:usr/local/lib/ -noixemul -lSDL -lSDL_mixer -lSDL_ttf
+
+all: $(RADON) $(SMACKER) $(PKWARE) $(STORMLIB) $(DEVILUTION) $(DEVILUTIONX)
+
+$(SMACKER): $(OBJSMACKER)
+	$(AR) r $(SMACKER) $(OBJSMACKER)
+	$(RANLIB) $@
+
+$(RADON): $(OBJRADON)
+	$(AR) r $(RADON) $(OBJRADON)
+	$(RANLIB) $@
+
+$(PKWARE): $(OBJPKWARE)
+	$(AR) r $(PKWARE) $(OBJPKWARE)
+	$(RANLIB) $@
+
+$(STORMLIB): $(OBJSTORM)
+	$(AR) r $(STORMLIB) $(OBJSTORM)
+	$(RANLIB) $@
+
+$(DEVILUTION): $(OBJDEVILUTION)
+	$(AR) r $(DEVILUTION) $(OBJDEVILUTION)
+	$(RANLIB) $@
+
+$(DEVILUTIONX): $(OBJDEVILUTIONX)
+	$(CXX) -o $@ $(BDX)/*.o $(LIBS) 
+
+
+
+$(BS)/smk_bitstream.o: 3rdParty/libsmacker/smk_bitstream.c
+	$(DO_CC)
+$(BS)/smk_hufftree.o: 3rdParty/libsmacker/smk_hufftree.c
+	$(DO_CC)
+$(BS)/smacker.o: 3rdParty/libsmacker/smacker.c
+	$(DO_CC)
+
+$(BR)/File.o: 3rdParty/Radon/Radon/source/File.cpp
+	$(DO_CXX)
+$(BR)/Key.o: 3rdParty/Radon/Radon/source/Key.cpp
+	$(DO_CXX)
+$(BR)/Named.o: 3rdParty/Radon/Radon/source/Named.cpp
+	$(DO_CXX)
+$(BR)/Section.o: 3rdParty/Radon/Radon/source/Section.cpp
+	$(DO_CXX)
+
+$(BPK)/explode.o: 3rdParty/PKWare/explode.cpp
+	$(DO_CXX)
+$(BPK)/implode.o: 3rdParty/PKWare/implode.cpp
+	$(DO_CXX)
+
+$(BST)/FileStream.o: 3rdParty/StormLib/src/FileStream.cpp
+	$(DO_CXX)
+$(BST)/SBaseCommon.o: 3rdParty/StormLib/src/SBaseCommon.cpp
+	$(DO_CXX)
+$(BST)/SBaseFileTable.o: 3rdParty/StormLib/src/SBaseFileTable.cpp
+	$(DO_CXX)
+$(BST)/SBaseSubTypes.o: 3rdParty/StormLib/src/SBaseSubTypes.cpp
+	$(DO_CXX)
+$(BST)/SCompression.o: 3rdParty/StormLib/src/SCompression.cpp
+	$(DO_CXX)
+$(BST)/SFileExtractFile.o: 3rdParty/StormLib/src/SFileExtractFile.cpp
+	$(DO_CXX)
+$(BST)/SFileFindFile.o: 3rdParty/StormLib/src/SFileFindFile.cpp
+	$(DO_CXX)
+$(BST)/SFileGetFileInfo.o: 3rdParty/StormLib/src/SFileGetFileInfo.cpp
+	$(DO_CXX)
+$(BST)/SFileOpenArchive.o: 3rdParty/StormLib/src/SFileOpenArchive.cpp
+	$(DO_CXX)
+$(BST)/SFileOpenFileEx.o: 3rdParty/StormLib/src/SFileOpenFileEx.cpp
+	$(DO_CXX)
+$(BST)/SFileReadFile.o: 3rdParty/StormLib/src/SFileReadFile.cpp
+	$(DO_CXX)
+
+
+
+$(BD)/appfat.o: Source/appfat.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/automat.o: Source/automap.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/capture.o: Source/capture.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/codec.o: Source/codec.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/control.o: Source/control.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/cursor.o: Source/cursor.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/dead.o: Source/dead.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/debug.o: Source/debug.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/diablo.o: Source/diablo.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/doom.o: Source/doom.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/drlg_l1.o: Source/drlg_l1.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/drlg_l2.o: Source/drlg_l2.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/drlg_l3.o: Source/drlg_l3.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/drlg_l4.o: Source/drlg_l4.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/dthread.o: Source/dthread.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/effects.o: Source/effects.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/encrypt.o: Source/encrypt.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/engine.o: Source/engine.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/error.o: Source/error.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/gamemenu.o: Source/gamemenu.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/gendung.o: Source/gendung.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/gmenu.o: Source/gmenu.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/help.o: Source/help.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/init.o: Source/init.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/interfac.o: Source/interfac.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/inv.o: Source/inv.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/itemdat.o: Source/itemdat.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/items.o: Source/items.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/lighting.o: Source/lighting.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/loadsave.o: Source/loadsave.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/mainmenu.o: Source/mainmenu.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/minitext.o: Source/minitext.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/misdat.o: Source/misdat.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/missiles.o: Source/missiles.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/monstdat.o: Source/monstdat.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/monster.o: Source/monster.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/movie.o: Source/movie.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/mpqapi.o: Source/mpqapi.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/msg.o: Source/msg.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/multi.o: Source/multi.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/nthread.o: Source/nthread.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/objdat.o: Source/objdat.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/objects.o: Source/objects.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/pack.o: Source/pack.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/palette.o: Source/palette.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/path.o: Source/path.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/pfile.o: Source/pfile.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/player.o: Source/player.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/plrmsg.o: Source/plrmsg.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/portal.o: Source/portal.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/spelldat.o: Source/spelldat.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/quests.o: Source/quests.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/render.o: Source/render.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/restrict.o: Source/restrict.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/scrollrt.o: Source/scrollrt.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/setmaps.o: Source/setmaps.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/sha.o: Source/sha.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/spells.o: Source/spells.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/stores.o: Source/stores.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/sync.o: Source/sync.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/textdat.o: Source/textdat.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/themes.o: Source/themes.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/tmsg.o: Source/tmsg.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/town.o: Source/town.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/towners.o: Source/towners.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/track.o: Source/track.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/trigs.o: Source/trigs.cpp
+	$(DO_CXX_DEVILUTION)
+$(BD)/wave.o: Source/wave.cpp
+	$(DO_CXX_DEVILUTION)
+
+
+$(BDX)/dx.o: SourceX/dx.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/game_controller.o: SourceX/controls/devices/game_controller.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/joystick.o: SourceX/controls/devices/joystick.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/kbcontroller.o: SourceX/controls/devices/kbcontroller.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/controller.o: SourceX/controls/controller.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/controller_motion.o: SourceX/controls/controller_motion.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/game_controls.o: SourceX/controls/game_controls.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/menu_controls.o: SourceX/controls/menu_controls.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/plrctrls.o: SourceX/controls/plrctrls.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/touch.o: SourceX/controls/touch.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/modifier_hints.o:SourceX/controls/modifier_hints.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/ddraw.o: SourceX/miniwin/ddraw.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/misc.o: SourceX/miniwin/misc.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/misc_io.o: SourceX/miniwin/misc_io.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/misc_msg.o: SourceX/miniwin/misc_msg.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/rand.o: SourceX/miniwin/rand.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/thread.o: SourceX/thread.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/soundsample.o: SourceX/soundsample.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/display.o: SourceX/display.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/sound.o: SourceX/sound.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/storm.o: SourceX/storm/storm.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/storm_net.o: SourceX/storm/storm_net.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/storm_dx.o: SourceX/storm/storm_dx.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/abstract_net.o: SourceX/dvlnet/abstract_net.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/loopback.o: SourceX/dvlnet/loopback.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/packet.o: SourceX/dvlnet/packet.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/base.o: SourceX/dvlnet/base.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/frame_queue.o: SourceX/dvlnet/frame_queue.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/cdwrap.o: SourceX/dvlnet/cdwrap.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/art_draw.o: SourceX/DiabloUI/art_draw.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/errorart.o: SourceX/DiabloUI/errorart.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/art.o: SourceX/DiabloUI/art.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/button.o: SourceX/DiabloUI/button.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/credits.o: SourceX/DiabloUI/credits.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/credits_lines.o: SourceX/DiabloUI/credits_lines.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/diabloui.o: SourceX/DiabloUI/diabloui.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/dialogs.o: SourceX/DiabloUI/dialogs.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/fonts.o: SourceX/DiabloUI/fonts.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/mainmenu.o: SourceX/DiabloUI/mainmenu.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/progress.o: SourceX/DiabloUI/progress.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/scrollbar.o: SourceX/DiabloUI/scrollbar.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/selconn.o: SourceX/DiabloUI/selconn.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/selgame.o: SourceX/DiabloUI/selgame.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/selhero.o: SourceX/DiabloUI/selhero.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/selyesno.o: SourceX/DiabloUI/selyesno.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/selok.o: SourceX/DiabloUI/selok.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/text_draw.o: SourceX/DiabloUI/text_draw.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/text.o: SourceX/DiabloUI/text.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/title.o:SourceX/DiabloUI/title.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/ttf_render_wrapped.o: SourceX/DiabloUI/ttf_render_wrapped.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/morphos_fix.o: SourceX/platform/morphos/morphos_fix.cpp
+	$(DO_CXX_DEVILUTIONX)
+$(BDX)/main.o: SourceX/main.cpp
+	$(DO_CXX_DEVILUTIONX)
+

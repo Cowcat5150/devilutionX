@@ -14,6 +14,10 @@
 
 #include "DiabloUI/diabloui.h"
 
+#if defined(__MORPHOS__) && !defined(WARPUP)
+#undef Enqueue
+#endif
+
 namespace dvl {
 
 std::string basePath;
@@ -40,6 +44,8 @@ static Mix_Chunk *SFileChunk;
 
 void GetBasePath(char *buffer, size_t size)
 {
+	#if !defined(__MORPHOS__) && !defined(WARPUP)
+
 	if (basePath.length()) {
 		snprintf(buffer, size, "%s", basePath.c_str());
 		return;
@@ -54,10 +60,18 @@ void GetBasePath(char *buffer, size_t size)
 
 	snprintf(buffer, size, "%s", path);
 	SDL_free(path);
+
+	#else
+
+	snprintf(buffer, 9, "%s", "PROGDIR:");
+
+	#endif
 }
 
 void GetPrefPath(char *buffer, size_t size)
 {
+	#if !defined(__MORPHOS__) && !defined(WARPUP)
+
 	char *path = SDL_GetPrefPath("diasurgical", "devilution");
 	if (path == NULL) {
 		buffer[0] = '\0';
@@ -66,6 +80,12 @@ void GetPrefPath(char *buffer, size_t size)
 
 	snprintf(buffer, size, "%s", path);
 	SDL_free(path);
+
+	#else
+
+	snprintf(buffer, 9, "%s", "PROGDIR:");
+
+	#endif
 }
 
 void TranslateFileName(char *dst, int dstLen, const char *src)
@@ -594,6 +614,9 @@ void SVidPlayBegin(char *filename, int a2, int a3, int a4, int a5, int flags, HA
 	// Set the video mode close to the SVid resolution while preserving aspect ratio.
 	{
 		const auto *display = SDL_GetVideoSurface();
+		
+		#if !defined(__MORPHOS__) && !defined(WARPUP)
+		
 		IsSVidVideoMode = (display->flags & (SDL_FULLSCREEN | SDL_NOFRAME)) != 0;
 		if (IsSVidVideoMode) {
 			int w, h;
@@ -606,6 +629,12 @@ void SVidPlayBegin(char *filename, int a2, int a3, int a4, int a5, int flags, HA
 			}
 			SetVideoMode(w, h, display->format->BitsPerPixel, display->flags);
 		}
+		
+		#else
+		
+		SetVideoMode(display->w, display->h, display->format->BitsPerPixel, display->flags); // null surface fix morphos
+		
+		#endif
 	}
 #endif
 	memcpy(SVidPreviousPalette, orig_palette, 1024);

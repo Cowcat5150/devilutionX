@@ -114,6 +114,24 @@ void init_get_file_info()
 	snprintf(gszVersionNumber, MAX_PATH, "version %s", PROJECT_VERSION);
 }
 
+#if defined(__MORPHOS__) || defined(WARPUP)
+
+#include <SDL_ttf.h>
+
+void atexit_fix(void)
+{
+	init_cleanup();
+	UiDestroy();
+	sound_cleanup();
+	effects_cleanup_sfx();
+	TTF_Quit();
+	SDL_VideoQuit();
+	SDL_Quit();
+	dx_cleanup();
+}
+
+#endif
+
 LRESULT MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (Msg) {
@@ -127,6 +145,11 @@ LRESULT MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 	case WM_QUERYNEWPALETTE:
 		return 1;
 	case WM_QUERYENDSESSION:
+		
+		#if defined(__MORPHOS__) || defined(WARPUP)
+		atexit_fix();
+		#endif
+	
 		exit(0);
 	}
 

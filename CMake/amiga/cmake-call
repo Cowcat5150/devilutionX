@@ -1,0 +1,1 @@
+cmake .. -DWARPOS=ON -DCMAKE_TOOLCHAIN_FILE=CMake/amiga/ppc-warpos.cmake

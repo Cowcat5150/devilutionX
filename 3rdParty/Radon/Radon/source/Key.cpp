@@ -2,6 +2,24 @@
 
 #include "../include/Radon.hpp"
 
+#if defined(WARPUP)
+
+#include <stdlib.h>
+#include <string>
+#include <sstream>
+
+namespace std
+{
+    template < typename T > std::string to_string( const T& n )
+    {
+        std::ostringstream stm ;
+        stm << n ;
+        return stm.str() ;
+    }
+}
+
+#endif
+
 namespace radon
 {
 	Key::Key()

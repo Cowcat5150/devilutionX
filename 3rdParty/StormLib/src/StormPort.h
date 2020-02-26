@@ -142,6 +142,9 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
+#if defined(WARPUP)
+#include <strings.h>
+#endif
 #include <ctype.h>
 #include <assert.h>
 #include <errno.h>
@@ -214,8 +217,10 @@
   #endif
 
   // Typedefs for ANSI C
+  #if !defined (WARPUP) && !defined(__MORPHOS__)
   typedef unsigned char  BYTE;
   typedef int            LONG;
+  #endif
   typedef unsigned short USHORT;
   typedef unsigned int   DWORD;
   typedef unsigned long  DWORD_PTR;
