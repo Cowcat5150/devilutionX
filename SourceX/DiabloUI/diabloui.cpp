@@ -1,4 +1,4 @@
-#include "devilution.h"
+#include "all.h"
 #include "display.h"
 #include "stubs.h"
 #include "utf8.h"
@@ -36,7 +36,6 @@ Art ArtBackground;
 Art ArtCursor;
 Art ArtHero;
 bool gbSpawned;
-int heroLevel;
 
 void (*gfnSoundFunction)(char *file);
 void (*gfnListFocus)(int value);
@@ -49,11 +48,12 @@ bool UiItemsWraps;
 char *UiTextInput;
 int UiTextInputLen;
 
+int SelectedItem = 0;
+
 namespace {
 
 DWORD fadeTc;
 int fadeValue = 0;
-int SelectedItem = 0;
 
 struct {
 	bool upArrowPressed = false;
@@ -328,14 +328,15 @@ void UiHandleEvents(SDL_Event *event)
 	}
 
 	if (event->type == SDL_QUIT)
-	{
-		#if defined(__MORPHOS__)
-		atexit_fix();
-		#endif
+	{		#if defined(__MORPHOS__)
 		
-		exit(0);
+		atexit_fix();
+
+		#else
+
+		exit(0);		
+		#endif
 	}
-	
 #ifndef USE_SDL1
 	if (event->type == SDL_JOYDEVICEADDED || event->type == SDL_JOYDEVICEREMOVED) {
 		InitController();

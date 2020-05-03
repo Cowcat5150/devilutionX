@@ -18,13 +18,11 @@
 #define SDL_zero(x) SDL_memset(&(x), 0, sizeof((x)))
 #define SDL_InvalidParamError(param) SDL_SetError("Parameter '%s' is invalid", (param))
 #define SDL_floor floor
-
-#if defined(__MORPHOS__) && !defined(WARPUP)
+#if defined (__MORPHOS__) && !defined(WARPUP)
 #define SDL_snprintf snprintf
 #define SDL_getenv getenv
 #define SDL_strlcpy strlcpy
 #endif
-
 //== Events handling
 
 #define SDL_threadID Uint32
@@ -474,17 +472,16 @@ SDL_LowerBlitScaled(SDL_Surface *src, SDL_Rect *srcrect,
     SDL_Surface *dst, SDL_Rect *dstrect)
 {
 	#if !defined(__MORPHOS__) && !defined(WARPUP)
-	
 	if (SDLBackport_PixelFormatFormatEq(src->format, dst->format) && !SDLBackport_IsPixelFormatIndexed(src->format)) {
 		return SDL_SoftStretch(src, srcrect, dst, dstrect);
 	} else {
 		return SDL_LowerBlit(src, srcrect, dst, dstrect);
 	}
-	
+
 	#else
-	
+
 	return SDL_SoftStretch(src, srcrect, dst, dstrect);
-	
+
 	#endif
 }
 

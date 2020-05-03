@@ -4,7 +4,7 @@
 
 #if defined(WARPUP)
 
-#include <stdlib.h>
+#include <stdlib.h> // atof
 #include <string>
 #include <sstream>
 

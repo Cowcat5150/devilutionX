@@ -6,6 +6,8 @@ BST = $(B)/StormLib.dir
 BD = $(B)/devilution.dir
 BDX = $(B)/devilutionX.dir
 
+#$(mkdir -p $(BDX2))
+
 CXX = g++
 CC = gcc
 
@@ -152,7 +154,6 @@ $(BDX)/sound.o \
 $(BDX)/soundsample.o \
 $(BDX)/storm.o \
 $(BDX)/storm_net.o \
-$(BDX)/storm_dx.o \
 $(BDX)/abstract_net.o \
 $(BDX)/loopback.o \
 $(BDX)/packet.o \
@@ -183,6 +184,9 @@ $(BDX)/ttf_render_wrapped.o \
 $(BDX)/main.o \
 $(BDX)/morphos_fix.o \
 
+MKDIR_P = mkdir -p
+#build_dirs:
+	#@-mkdir -p $(B) $(BPK) $(BR) $(BS) $(BST) $(BD) $(BDX)
 
 SMACKER = $(B)/libsmacker.a
 RADON = $(B)/libradon.a
@@ -191,13 +195,17 @@ STORMLIB = $(B)/libStormLib.a
 DEVILUTION = $(B)/libdevilution.a
 DEVILUTIONX = $(B)/devilutionx-mos
 
-#rm -f $(B)/devilutionx-mos
-#-rm -f devilutionx-mos
 
 #LIBS = $(DEVILUTION) $(PKWARE) $(STORMLIB) $(SMACKER) $(RADON) -lSDL_mixer -lSDL_ttf -lSDL -static-libgcc -static-libstdc++ -woslibs -lpthreads
 LIBS = $(DEVILUTION) $(PKWARE) $(STORMLIB) $(SMACKER) $(RADON) -Lgg:usr/local/lib/ -noixemul -lSDL -lSDL_mixer -lSDL_ttf
 
-all: $(RADON) $(SMACKER) $(PKWARE) $(STORMLIB) $(DEVILUTION) $(DEVILUTIONX)
+
+all: $(OUT_DIR) $(RADON) $(SMACKER) $(PKWARE) $(STORMLIB) $(DEVILUTION) $(DEVILUTIONX)
+
+dirs: $(B) $(BR)
+
+$(OUT_DIR): $(BR)
+	$(MKDIR_P) $(OUT_DIR)
 
 $(SMACKER): $(OBJSMACKER)
 	$(AR) r $(SMACKER) $(OBJSMACKER)
@@ -451,8 +459,6 @@ $(BDX)/sound.o: SourceX/sound.cpp
 $(BDX)/storm.o: SourceX/storm/storm.cpp
 	$(DO_CXX_DEVILUTIONX)
 $(BDX)/storm_net.o: SourceX/storm/storm_net.cpp
-	$(DO_CXX_DEVILUTIONX)
-$(BDX)/storm_dx.o: SourceX/storm/storm_dx.cpp
 	$(DO_CXX_DEVILUTIONX)
 $(BDX)/abstract_net.o: SourceX/dvlnet/abstract_net.cpp
 	$(DO_CXX_DEVILUTIONX)

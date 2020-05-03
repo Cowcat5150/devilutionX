@@ -1,4 +1,9 @@
-#include "diablo.h"
+/**
+ * @file init.cpp
+ *
+ * Implementation of routines for initializing the environment, disable screen saver, load MPQ.
+ */
+#include "all.h"
 
 #include "../3rdParty/Storm/Source/storm.h"
 #include "../DiabloUI/diabloui.h"
@@ -50,7 +55,7 @@ void init_create_window()
 	atexit(dx_cleanup);
 	gbActive = true;
 	gpBufStart = &gpBuffer[BUFFER_WIDTH * SCREEN_Y];
-	gpBufEnd = &gpBuffer[BUFFER_WIDTH * (SCREEN_HEIGHT + SCREEN_Y)];
+	gpBufEnd = (BYTE *)(BUFFER_WIDTH * (SCREEN_HEIGHT + SCREEN_Y));
 	SDL_DisableScreenSaver();
 }
 
@@ -122,16 +127,22 @@ void atexit_fix(void)
 {
 	init_cleanup();
 	UiDestroy();
+	//SDL_Log("UiDestroy");
 	sound_cleanup();
+	//SDL_Log("sound_cleanup");
 	effects_cleanup_sfx();
+	//SDL_Log("effects_cleanup_stf");
 	TTF_Quit();
-	SDL_VideoQuit();
-	SDL_Quit();
+	//SDL_Log("ttf quit");
 	dx_cleanup();
+	//SDL_Log("dx_cleanup");
+	SDL_VideoQuit();
+	//SDL_Log("sdl_videoquit");
+	//SDL_Log("going to sdl_quit");
+	SDL_Quit();
 }
 
 #endif
-
 LRESULT MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (Msg) {
@@ -145,12 +156,14 @@ LRESULT MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 	case WM_QUERYNEWPALETTE:
 		return 1;
 	case WM_QUERYENDSESSION:
-		
 		#if defined(__MORPHOS__) || defined(WARPUP)
+
 		atexit_fix();
-		#endif
-	
+
+		#else
+
 		exit(0);
+		#endif
 	}
 
 	return 0;

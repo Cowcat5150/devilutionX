@@ -6,7 +6,7 @@
 #include <array>
 #include <memory>
 
-#include "devilution.h"
+#include "all.h"
 #include "dvlnet/abstract_net.h"
 #include "dvlnet/packet.h"
 
@@ -17,11 +17,9 @@
 #define LEAVE_NORMAL 3
 #define LEAVE_ENDING 0x40000004
 #define LEAVE_DROP 0x40000006
-
 #if defined(__MORPHOS__)
 #undef send
 #endif
-
 namespace dvl {
 namespace net {
 

@@ -1,4 +1,5 @@
-#include "devilution.h"
+#include "all.h"
+#include "../3rdParty/Storm/Source/storm.h"
 
 #if !SDL_VERSION_ATLEAST(2, 0, 4)
 #include <queue>
@@ -13,11 +14,9 @@
 #include <smacker.h>
 
 #include "DiabloUI/diabloui.h"
-
 #if defined(__MORPHOS__) && !defined(WARPUP)
 #undef Enqueue
 #endif
-
 namespace dvl {
 
 std::string basePath;
@@ -43,8 +42,7 @@ static radon::File ini(getIniPath());
 static Mix_Chunk *SFileChunk;
 
 void GetBasePath(char *buffer, size_t size)
-{
-	#if !defined(__MORPHOS__) && !defined(WARPUP)
+{	#if !defined(__MORPHOS__) && !defined(WARPUP)
 
 	if (basePath.length()) {
 		snprintf(buffer, size, "%s", basePath.c_str());
@@ -614,9 +612,8 @@ void SVidPlayBegin(char *filename, int a2, int a3, int a4, int a5, int flags, HA
 	// Set the video mode close to the SVid resolution while preserving aspect ratio.
 	{
 		const auto *display = SDL_GetVideoSurface();
-		
 		#if !defined(__MORPHOS__) && !defined(WARPUP)
-		
+
 		IsSVidVideoMode = (display->flags & (SDL_FULLSCREEN | SDL_NOFRAME)) != 0;
 		if (IsSVidVideoMode) {
 			int w, h;
@@ -629,15 +626,15 @@ void SVidPlayBegin(char *filename, int a2, int a3, int a4, int a5, int flags, HA
 			}
 			SetVideoMode(w, h, display->format->BitsPerPixel, display->flags);
 		}
-		
+
 		#else
-		
+
 		SetVideoMode(display->w, display->h, display->format->BitsPerPixel, display->flags); // null surface fix morphos
-		
+
 		#endif
 	}
 #endif
-	memcpy(SVidPreviousPalette, orig_palette, 1024);
+	memcpy(SVidPreviousPalette, orig_palette, sizeof(SVidPreviousPalette));
 
 	// Copy frame to buffer
 	SVidSurface = SDL_CreateRGBSurfaceWithFormatFrom(
@@ -696,7 +693,7 @@ BOOL SVidPlayContinue(void)
 			orig_palette[i].g = palette_data[i * 3 + 1];
 			orig_palette[i].b = palette_data[i * 3 + 2];
 		}
-		memcpy(logical_palette, orig_palette, 1024);
+		memcpy(logical_palette, orig_palette, sizeof(logical_palette));
 
 		if (SDLC_SetSurfaceAndPaletteColors(SVidSurface, SVidPalette, colors, 0, 256) <= -1) {
 			SDL_Log(SDL_GetError());
@@ -736,7 +733,7 @@ BOOL SVidPlayContinue(void)
 		int factor;
 		int wFactor = output_surface->w / SVidWidth;
 		int hFactor = output_surface->h / SVidHeight;
-		if (wFactor > hFactor && output_surface->h > SVidHeight) {
+		if (wFactor > hFactor && (unsigned int)output_surface->h > SVidHeight) {
 			factor = hFactor;
 		} else {
 			factor = wFactor;
@@ -756,9 +753,9 @@ BOOL SVidPlayContinue(void)
 			}
 		} else {
 #ifdef USE_SDL1
-			SDL_Surface *tmp = SDL_ConvertSurface(SVidSurface, window->format, 0);
+			SDL_Surface *tmp = SDL_ConvertSurface(SVidSurface, ghMainWnd->format, 0);
 #else
-			Uint32 format = SDL_GetWindowPixelFormat(window);
+			Uint32 format = SDL_GetWindowPixelFormat(ghMainWnd);
 			SDL_Surface *tmp = SDL_ConvertSurfaceFormat(SVidSurface, format, 0);
 #endif
 			if (SDL_BlitScaled(tmp, nullptr, output_surface, &pal_surface_offset) <= -1) {
@@ -814,7 +811,7 @@ void SVidPlayEnd(HANDLE video)
 	SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, SDL1_VIDEO_MODE_BPP, GetOutputSurface()->flags);
 #endif
 
-	memcpy(orig_palette, SVidPreviousPalette, 1024);
+	memcpy(orig_palette, SVidPreviousPalette, sizeof(orig_palette));
 #ifndef USE_SDL1
 	if (renderer) {
 		SDL_DestroyTexture(texture);
